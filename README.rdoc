@@ -1,0 +1,109 @@
+= Rails-DK/NF Hybrid
+
+Rails-DK/NF Hybrid is a Rails 3 plugin.
+This plugin adds a macro-like class method,
+<tt>additional_foreign_key</tt>, to the ActiveRecord::Base class.
+Using <tt>additional_foreign_key</tt>, you can make natural key
+assignment easier in the Rails-DK/NF hybrid.
+
+
+== Description
+
+The Rails-DK/NF hybrid was introduced by Dan Chak in his book,
+“Enterprise Rails, by Dan Chak. Copyright 2009 Dan Chak, 978-0-596-51520-1.”
+With the Rails-DK/NF hybrid, you may use both Rails *id* columns as
+primary keys and natural keys as a secondary keys.
+Fortunately, you do not have to assign foreign key columns implicitly
+because Rails association would normally do the magic.
+However, you have to assign natural keys explicitly.
+
+To make this natural-key assignment implicitly,
+you can override the association accessor method. For example,
+
+  class Membership < ActiveRecord::Base
+    belongs_to :member
+
+    alias :original_member= :member=
+    def member=(m)
+      user_code  = m.user_code
+      group_code = m.group_code
+      original_member=(m)
+    end
+  end
+
+This override pattern appears wherever you utilize natural keys
+as foreign keys. But don't repeat yourself. Instead of overriding,
+Rails-DK/NF hybrid plugin provides <tt>additional_foreign_key_macro</tt>
+macro-like class method. Using <tt>additional_foreign_key</tt>,
+you can define that implicit natural-key assignment easier.
+
+  class Membership < ActiveRecord::base
+    belongs_to :member
+    additional_foreign_key :member, :foreign_key => [:user_code, :group_code]
+  end
+
+
+== Usage
+
+:call-seq:
+  additional_foreign_key(association_id, options)
+
+
+=== Options
+
+[:foreign_key]
+  Specify the column name(s) of the additional foreign key.
+  You may specify a composite key by <tt>Array</tt>.
+[:secondary_key]
+  Specify the column name(s) of the referenced table's secondary key.
+  You may specify a composite key by <tt>Array</tt>.
+  If omitted, the <tt>:foreign_key</tt> value is used.
+
+=== Example
+
+* Use the *author_name* column as an additional foreign key
+  with the same name as the referenced table's secondary key.
+
+    class Book
+      belongs_to :author
+      additional_foreign_key :author, :foreign_key => :author_name
+    end
+
+* Use the *person_name* column table as an additional foreign key in the *comment* table,
+  and the *name* column as a secondary key in the *people* table.
+
+    class Comment
+      belongs_to :person
+      additional_foreign_key :person, :secondary_key => :name, :foreign_key => :person_name,
+    end
+
+* Use a composite natural key as an additional foreign key.
+
+    class Membership
+      belongs_to :member
+      additional_foreign_key :member, :foreign_key => [:user_code, :group_code]
+    end
+
+
+== Anatomy
+
+<tt>additional_foreign_key</tt> class-method simply defines a <tt>before_save</tt> callback
+to assign natural key columns implicitly. The following example:
+
+  class Membership
+    belongs_to :member
+    additional_foreign_key :member, :foreign_key => [:user_code, :group_code]
+  end
+
+does the same thing as:
+
+  class Membership
+    belongs_to :member
+    before_save do |membership|
+      membership.user_code = member.user_code
+      membership.group_code = member.group_code
+    end
+  end
+
+
+Copyright (c) 2010 Takahiro Noda, released under the MIT license
