@@ -7,6 +7,11 @@ Using <tt>additional_foreign_key</tt>, you can make natural key
 assignment easier in the Rails-DK/NF hybrid.
 
 
+== Setup
+
+  % rails plugin install git://github.com/tnoda/rails_dk_nf_hybrid.git
+
+
 == Description
 
 The Rails-DK/NF hybrid was introduced by Dan Chak in his book,
@@ -45,9 +50,7 @@ you can define that implicit natural-key assignment easier.
 
 == Usage
 
-:call-seq:
   additional_foreign_key(association_id, options)
-
 
 === Options
 
@@ -87,8 +90,8 @@ you can define that implicit natural-key assignment easier.
 
 == Anatomy
 
-<tt>additional_foreign_key</tt> class-method simply defines a <tt>before_save</tt> callback
-to assign natural key columns implicitly. The following example:
+<tt>additional_foreign_key</tt> simply defines a <tt>before_save</tt> callback
+to assign natural-key columns implicitly. The following example:
 
   class Membership
     belongs_to :member
