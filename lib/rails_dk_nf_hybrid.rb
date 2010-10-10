@@ -24,7 +24,7 @@ module RailsDkNfHybrid
       association = model.__send__(@association_id)
       [@foreign_key, @secondary_key].transpose.each do |fkey, skey| 
         model.__send__("#{fkey}=".to_sym, association.__send__(skey))
-      end
+      end if association
     end
   end
 end
