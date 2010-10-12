@@ -57,7 +57,7 @@ you can define that implicit natural-key assignment easier.
 [:foreign_key]
   Specify the column name(s) of the additional foreign key.
   You may specify a composite key by <tt>Array</tt>.
-[:secondary_key]
+[:referenced_foreign_key]
   Specify the column name(s) of the referenced table's secondary key.
   You may specify a composite key by <tt>Array</tt>.
   If omitted, the <tt>:foreign_key</tt> value is used.
@@ -77,7 +77,7 @@ you can define that implicit natural-key assignment easier.
 
     class Comment
       belongs_to :person
-      additional_foreign_key :person, :secondary_key => :name, :foreign_key => :person_name,
+      additional_foreign_key :person, :referenced_foreign_key => :name, :foreign_key => :person_name,
     end
 
 * Use a composite natural key as an additional foreign key.

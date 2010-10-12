@@ -16,13 +16,13 @@ module RailsDkNfHybrid
       @association_id = association_id
       raise ":foreign_key option not found" unless options[:foreign_key]
       @foreign_key = [options[:foreign_key]].flatten
-      @secondary_key = (options[:secondary_key] && [options[:secondary_key]].flatten) || @foreign_key
-      raise "length mismatch between the :foreign_key option and the :secondary_key option" unless @foreign_key.size == @secondary_key.size
+      @referenced_foreign_key = (options[:referenced_foreign_key] && [options[:referenced_foreign_key]].flatten) || @foreign_key
+      raise "length mismatch between the :foreign_key option and the :referenced_foreign_key option" unless @foreign_key.size == @referenced_foreign_key.size
     end
 
     def before_save(model)
       association = model.__send__(@association_id)
-      [@foreign_key, @secondary_key].transpose.each do |fkey, skey| 
+      [@foreign_key, @referenced_foreign_key].transpose.each do |fkey, skey| 
         model.__send__("#{fkey}=".to_sym, association.__send__(skey))
       end if association
     end
