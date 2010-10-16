@@ -36,4 +36,19 @@ ActiveRecord::Schema.define do
     t.string  :user_code
     t.string  :group_code
   end
+
+  create_table :cities, :force => true do |t|
+    t.string  :city_name
+  end
+
+  create_table :restaurants, :force => true do |t|
+    t.integer :city_id
+    t.string  :city_name
+    t.integer :cuisine_id
+    t.string  :cuisine_name
+  end
+
+  create_table :cuisines, :force => true do |t|
+    t.string :cuisine_name
+  end
 end
